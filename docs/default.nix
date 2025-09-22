@@ -50,7 +50,7 @@ let
     name = "<${repo}/${subpath}>";
   };
 
-  nixcordPath = toString ./..;
+  equinixPath = toString ./..;
 
   transformOptions =
     opt:
@@ -59,9 +59,9 @@ let
       declarations = (
         map (
           decl:
-          if (lib.hasPrefix nixcordPath (toString decl)) then
-            (githubDeclaration "KaylorBen" "nixcord" "main" (
-              lib.removePrefix "/" (lib.removePrefix nixcordPath (toString decl))
+          if (lib.hasPrefix equinixPath (toString decl)) then
+            (githubDeclaration "not-a-cowfr" "equinix" "main" (
+              lib.removePrefix "/" (lib.removePrefix equinixPath (toString decl))
             ))
           else
             decl
@@ -87,15 +87,15 @@ let
     }
   );
 
-  nixcordOptionsDoc = buildOptionsDocs { inherit modules; };
+  equinixOptionsDoc = buildOptionsDocs { inherit modules; };
 
-  nixcord-options = pkgs.callPackage ./nixcord-options.nix {
+  equinix-options = pkgs.callPackage ./equinix-options.nix {
     nixos-render-docs = pkgs.nixos-render-docs;
-    nixcord-options = nixcordOptionsDoc.optionsJSON;
+    equinix-options = equinixOptionsDoc.optionsJSON;
     revision = "latest";
   };
 in
 {
-  html = nixcord-options;
-  json = nixcordOptionsDoc.optionsJSON;
+  html = equinix-options;
+  json = equinixOptionsDoc.optionsJSON;
 }

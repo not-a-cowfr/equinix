@@ -25,8 +25,7 @@
 
           packages = {
             discord = pkgs.callPackage ./pkgs/discord.nix { };
-            dorion = pkgs.callPackage ./pkgs/dorion.nix { };
-            vencord = pkgs.callPackage ./pkgs/vencord.nix { };
+            equicord = pkgs.callPackage ./pkgs/equicord.nix { };
             docs-html =
               (import ./docs {
                 inherit pkgs;
@@ -43,21 +42,21 @@
             type = "app";
             program = "${pkgs.writeShellScript "open-docs" ''
               if command -v xdg-open >/dev/null 2>&1; then
-                xdg-open "${inputs.self.packages.${system}.docs-html}/share/doc/nixcord/index.xhtml"
+                xdg-open "${inputs.self.packages.${system}.docs-html}/share/doc/equinix/index.xhtml"
               elif command -v open >/dev/null 2>&1; then
-                open "${inputs.self.packages.${system}.docs-html}/share/doc/nixcord/index.xhtml"
+                open "${inputs.self.packages.${system}.docs-html}/share/doc/equinix/index.xhtml"
               else
                 echo "Documentation available at: ${
                   inputs.self.packages.${system}.docs-html
-                }/share/doc/nixcord/index.xhtml"
+                }/share/doc/equinix/index.xhtml"
               fi
             ''}";
           };
         };
       flake = {
         homeModules = {
-          default = inputs.self.homeModules.nixcord;
-          nixcord = import ./modules/hm-module.nix;
+          default = inputs.self.homeModules.equinix;
+          equinix = import ./modules/hm-module.nix;
         };
       };
     };

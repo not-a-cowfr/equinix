@@ -2998,9 +2998,9 @@ in
       '';
     };
   };
-  vencordToolbox = {
+  equicordToolbox = {
     enable = mkEnableOption ''
-      Adds a button next to the inbox button in the channel header that houses Vencord quick actions
+      Adds a button next to the inbox button in the channel header that houses Equicord quick actions
     '';
   };
   viewIcons = {
@@ -3086,7 +3086,7 @@ in
   webKeybinds = {
     enable = mkEnableOption ''
       Re-adds keybinds missing in the web version of Discord: ctrl+t, ctrl+shift+t, ctrl+tab, ctrl+shift+tab, ctrl+1-9, ctrl+,.
-      Only works fully on Vesktop/ArmCord, not inside your browser
+      Only works fully on Vencord/Equibop/Legcord, not inside your browser
     '';
   };
   webRichPresence = {
@@ -3096,7 +3096,7 @@ in
   };
   webScreenShareFixes = {
     enable = mkEnableOption ''
-      Removes 2500kbps bitrate cap on chromium and vesktop clients.
+      Removes 2500kbps bitrate cap on chromium and Equibop clients.
     '';
   };
   whoReacted = {
@@ -3278,7 +3278,7 @@ in
       default = "aboveNitro";
       example = "top";
       description = ''
-        Where to put the Vencord settings section
+        Where to put the Equicord settings section
         top - At the very top
         aboveNitro - Above the Nitro section
         belowNitro - Below the Nitro section
@@ -3306,7 +3306,7 @@ in
       // {
         default = true;
       };
-    # Required for Vesktop
+    # Required for Equibop
     # Enabling doesn't cause problems for normal client
   };
 }

@@ -5,10 +5,10 @@ on:
     branches:
       - main
     paths:
-      - 'flake.nix'
-      - 'flake.lock'
-      - 'modules/**'
-      - 'docs/**'
+      - "flake.nix"
+      - "flake.lock"
+      - "modules/**"
+      - "docs/**"
   workflow_dispatch:
 
 jobs:
@@ -37,7 +37,7 @@ jobs:
       - name: Build documentation
         run: |
           nix build .#docs-html
-          cp -r result/share/doc/nixcord public
+          cp -r result/share/doc/equinix public
           unlink result
 
       - name: Upload artifact

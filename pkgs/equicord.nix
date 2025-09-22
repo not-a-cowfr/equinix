@@ -23,28 +23,27 @@
 
 let
   stableVersion = "1.13.0";
-  stableHash = "sha256-MdbO74vAbsZyB6seOqxHvQL0HT4IdVnDjd+N3a9XAns=";
-  stablePnpmDeps = "sha256-JP9HOaP3DG+2F89tC77JZFD0ls35u/MzxNmvMCbBo9Y=";
+  unstableVersion = "2025-09-22";
+  
+  stableHash = "sha256-CwH8CFCVS7m52ysl6MKkdIT+Ej2+fhoseYsTYUAE670=";
+  unstableHash = "sha256-CwH8CFCVS7m52ysl6MKkdIT+Ej2+fhoseYsTYUAE670=";
 
-  unstableVersion = "1.13.0-unstable-2025-09-22";
-  unstableRev = "228b85a0c8287e72f88b89a821919c51cb982468";
-  unstableHash = "sha256-MdbO74vAbsZyB6seOqxHvQL0HT4IdVnDjd+N3a9XAns=";
-  unstablePnpmDeps = "sha256-JP9HOaP3DG+2F89tC77JZFD0ls35u/MzxNmvMCbBo9Y=";
+  stablePnpmHash = "sha256-vIoxzodqSsq4lhe2vp7QhkJld0M0OlXvxfOqj9pFAXs=";
 in
 stdenv.mkDerivation (finalAttrs: {
-  pname = "vencord" + lib.optionalString unstable "-unstable";
+  pname = "equicord" + lib.optionalString unstable "-unstable";
   version = if unstable then unstableVersion else stableVersion;
 
   src = fetchFromGitHub {
-    owner = "Vendicated";
-    repo = "Vencord";
-    rev = if unstable then unstableRev else "v${finalAttrs.version}";
+    owner = "Equicord";
+    repo = "Equicord";
+    tag = "${finalAttrs.version}";
     hash = if unstable then unstableHash else stableHash;
   };
 
   pnpmDeps = pnpm_10.fetchDeps {
     inherit (finalAttrs) pname src;
-    hash = if unstable then unstablePnpmDeps else stablePnpmDeps;
+    hash = if unstable then unstableHash else stablePnpmHash;
     fetcherVersion = 2;
   };
 
@@ -55,8 +54,8 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   env = {
-    VENCORD_REMOTE = "${finalAttrs.src.owner}/${finalAttrs.src.repo}";
-    VENCORD_HASH = "${finalAttrs.version}";
+    EQUICORD_REMOTE = "${finalAttrs.src.owner}/${finalAttrs.src.repo}";
+    EQUICORD_HASH = "${finalAttrs.version}";
   };
 
   buildPhase = ''
@@ -69,12 +68,11 @@ stdenv.mkDerivation (finalAttrs: {
   installPhase = ''
     runHook preInstall
     cp -r dist/${lib.optionalString buildWebExtension "chromium-unpacked/"} "$out"
-    cp package.json "$out"
     runHook postInstall
   '';
 
   passthru.updateScript = writeShellApplication {
-    name = "vencord-update";
+    name = "equicord-update";
     runtimeInputs = [
       cacert
       coreutils
@@ -85,7 +83,7 @@ stdenv.mkDerivation (finalAttrs: {
       perl
     ];
     text = ''
-      NIX_FILE="./pkgs/vencord.nix"
+      NIX_FILE="./pkgs/equicord.nix"
       UPDATE_TYPE="${if unstable then "unstable" else "stable"}"
       UPDATE_BOOL="${if unstable then "true" else "false"}"
 
@@ -147,7 +145,7 @@ stdenv.mkDerivation (finalAttrs: {
           echo "Set hash to empty, attempting build..."
           
           # Try to build and capture the expected hash from error message
-          if build_output=$(nix-build -E "with import <nixpkgs> {}; (callPackage ./pkgs/vencord.nix { unstable = $UPDATE_BOOL; }).pnpmDeps" --no-link --pure 2>&1); then
+          if build_output=$(nix-build -E "with import <nixpkgs> {}; (callPackage ./pkgs/equicord.nix { unstable = $UPDATE_BOOL; }).pnpmDeps" --no-link --pure 2>&1); then
             # If it succeeds with empty hash, something is wrong
             echo "Warning: Build succeeded with empty hash, this shouldn't happen"
             update_value_perl "''${prefix}PnpmDeps" "sha256-$old_hash"
@@ -184,7 +182,7 @@ stdenv.mkDerivation (finalAttrs: {
       if [ "$UPDATE_BOOL" = "true" ]; then
         base_version=$(get_latest_stable_tag | sed 's/^v//')
         echo "Getting main branch commit info..."
-        main_commit_response=$(curl -s "https://api.github.com/repos/Vendicated/Vencord/commits/main")
+        main_commit_response=$(curl -s "https://api.github.com/repos/Equicord/Equicord/commits/main")
         
         if ! echo "$main_commit_response" | jq empty 2>/dev/null; then
           echo "Error: Invalid JSON response from GitHub API"
@@ -200,7 +198,7 @@ stdenv.mkDerivation (finalAttrs: {
         fi
         
         echo "Getting commit details for $revision..."
-        commit_response=$(curl -s "https://api.github.com/repos/Vendicated/Vencord/commits/$revision")
+        commit_response=$(curl -s "https://api.github.com/repos/Equicord/Equicord/commits/$revision")
         
         if ! echo "$commit_response" | jq empty 2>/dev/null; then
           echo "Error: Invalid JSON response from GitHub API for commit details"
@@ -237,14 +235,11 @@ stdenv.mkDerivation (finalAttrs: {
   };
 
   meta = {
-    description = "Vencord web extension" + lib.optionalString unstable " (Unstable)";
-    homepage = "https://github.com/Vendicated/Vencord";
+    description = "Equicord web extension" + lib.optionalString unstable " (Unstable)";
+    homepage = "https://github.com/Equicord/Equicord";
     license = lib.licenses.gpl3Only;
     maintainers = with lib.maintainers; [
-      donteatoreo
-      FlafyDev
       NotAShelf
-      Scrumplex
     ];
   };
 })

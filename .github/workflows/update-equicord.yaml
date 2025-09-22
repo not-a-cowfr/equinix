@@ -1,4 +1,4 @@
-name: Update Vencord
+name: Update Equicord
 
 on:
   schedule:
@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-vencord:
-    name: Update Vencord ${{ matrix.variant }}
+  update-equicord:
+    name: Update Equicord ${{ matrix.variant }}
     runs-on: ubuntu-latest
     timeout-minutes: 4
     permissions:
@@ -23,11 +23,11 @@ jobs:
           - variant: "Stable"
             unstable: false
             version_expr: "version"
-            commit_prefix: "vencord"
+            commit_prefix: "equicord"
           - variant: "Unstable"
             unstable: true
             version_expr: "src.rev"
-            commit_prefix: "vencord-unstable"
+            commit_prefix: "equicord-unstable"
             version_truncate: true
 
     steps:
@@ -43,25 +43,25 @@ jobs:
         run: |
           VERSION_EXPR="${{ matrix.version_expr }}"
           OLD_VERSION=$(nix eval --impure --raw --expr \
-            "with import <nixpkgs> {}; (callPackage ./pkgs/vencord.nix { unstable = ${{ matrix.unstable }}; }).$VERSION_EXPR")
+            "with import <nixpkgs> {}; (callPackage ./pkgs/equicord.nix { unstable = ${{ matrix.unstable }}; }).$VERSION_EXPR")
           ${{ matrix.version_truncate && 'OLD_VERSION=${OLD_VERSION:0:7}' || '' }}
           echo "version=$OLD_VERSION" >> $GITHUB_OUTPUT
           echo "Old ${{ matrix.variant }} version: $OLD_VERSION"
 
-      - name: Update Vencord ${{ matrix.variant }}
+      - name: Update Equicord ${{ matrix.variant }}
         id: update
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if ! nix build --impure --expr 'let pkgs = import <nixpkgs> {}; in (pkgs.callPackage ./pkgs/vencord.nix { unstable = ${{ matrix.unstable }}; }).passthru.updateScript'; then
+          if ! nix build --impure --expr 'let pkgs = import <nixpkgs> {}; in (pkgs.callPackage ./pkgs/equicord.nix { unstable = ${{ matrix.unstable }}; }).passthru.updateScript'; then
             echo "Failed to build the update script."
             exit 1
           fi
-          if ! ./result/bin/vencord-update; then
+          if ! ./result/bin/equicord-update; then
             echo "Update script failed to execute successfully"
             exit 1
           fi
-          echo "Vencord ${{ matrix.variant }} update finished."
+          echo "Equicord ${{ matrix.variant }} update finished."
           rm ./result
 
       - name: Get new version
@@ -70,11 +70,11 @@ jobs:
         run: |
           VERSION_EXPR="${{ matrix.version_expr }}"
           NEW_VERSION=$(nix eval --impure --raw --expr \
-            "with import <nixpkgs> {}; (callPackage ./pkgs/vencord.nix { unstable = ${{ matrix.unstable }}; }).$VERSION_EXPR")
+            "with import <nixpkgs> {}; (callPackage ./pkgs/equicord.nix { unstable = ${{ matrix.unstable }}; }).$VERSION_EXPR")
           ${{ matrix.version_truncate && 'NEW_VERSION=${NEW_VERSION:0:7}' || '' }}
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "New ${{ matrix.variant }} version: $NEW_VERSION"
-          
+
           if [[ "${{ steps.old-version.outputs.version }}" == "$NEW_VERSION" ]]; then
             echo "No version change detected for ${{ matrix.variant }} - no commit needed"
           else
@@ -85,7 +85,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if ! nix-build -E 'with import <nixpkgs> {}; callPackage ./pkgs/vencord.nix { unstable = ${{ matrix.unstable }}; }'; then
+          if ! nix-build -E 'with import <nixpkgs> {}; callPackage ./pkgs/equicord.nix { unstable = ${{ matrix.unstable }}; }'; then
             echo "Build failed"
             exit 1
           fi
@@ -103,8 +103,8 @@ jobs:
           git config --global pull.rebase true
           git config --global rebase.autoStash true
 
-          if [[ -n "$(git status --porcelain pkgs/vencord.nix)" ]]; then
-            git add pkgs/vencord.nix
+          if [[ -n "$(git status --porcelain pkgs/equicord.nix)" ]]; then
+            git add pkgs/equicord.nix
             git commit -m "github: update ${{ matrix.commit_prefix }} ${{ steps.old-version.outputs.version }} -> ${{ steps.new-version.outputs.version }}"
             echo "changes=true" >> $GITHUB_OUTPUT
             echo "Successfully committed changes for ${{ matrix.variant }}"

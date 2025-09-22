@@ -38,7 +38,7 @@ let
   ]
   ++ parseRules.lowerPluginTitles;
 
-  # this is since many json options in Vencord are just int values with no description
+  # this is since many json options in Equicord are just int values with no description
   # ALL OF THESE HAVE TO BE UNIQUE!!!
   zeroOptions = [
     # options which evaluate to int 0
@@ -130,7 +130,7 @@ let
       (builtins.substring 1 (builtins.stringLength string) string)
     ]);
 
-  mkVencordCfg =
+  mkEquicordCfg =
     cfg:
     let
       recurse = mapAttrs' (
@@ -168,7 +168,7 @@ let
             # these without an upstream
             else if builtins.elem value twoOptions then
               2
-            # change at Vencord since
+            # change at Equicord since
             else if builtins.elem value threeOptions then
               3
             # these settings enums are
@@ -184,6 +184,6 @@ let
 in
 {
   inherit
-    mkVencordCfg
+    mkEquicordCfg
     ;
 }

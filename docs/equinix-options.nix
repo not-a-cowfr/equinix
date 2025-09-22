@@ -2,13 +2,13 @@
 {
   stdenvNoCC,
   nixos-render-docs,
-  nixcord-options,
+  equinix-options,
   revision,
   lib,
   documentation-highlighter,
 }:
 stdenvNoCC.mkDerivation {
-  name = "nixcord-options";
+  name = "equinix-options";
 
   nativeBuildInputs = [ nixos-render-docs ];
 
@@ -28,7 +28,7 @@ stdenvNoCC.mkDerivation {
     substituteInPlace options.md \
       --replace-fail \
         '@OPTIONS_JSON@' \
-        ${nixcord-options}/share/doc/nixos/options.json
+        ${equinix-options}/share/doc/nixos/options.json
 
     substituteInPlace manual.md \
       --replace-fail \
@@ -50,7 +50,7 @@ stdenvNoCC.mkDerivation {
 
   installPhase = ''
     runHook preInstall
-    dest="$out/share/doc/nixcord"
+    dest="$out/share/doc/equinix"
     mkdir -p "$(dirname "$dest")"
     mv out "$dest"
     runHook postInstall

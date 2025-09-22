@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.programs.nixcord;
+  cfg = config.programs.equinix;
 
   inherit (lib)
     mkEnableOption
@@ -47,20 +47,20 @@ let
       '';
     });
 
-  defaultVencord = applyPostPatch (
-    pkgs.callPackage ../pkgs/vencord.nix { unstable = cfg.discord.vencord.unstable; }
+  defaultEquicord = applyPostPatch (
+    pkgs.callPackage ../pkgs/equicord.nix { unstable = cfg.discord.equicord.unstable; }
   );
 in
 {
-  options.programs.nixcord = {
-    enable = mkEnableOption "Enables Discord with Vencord";
+  options.programs.equinix = {
+    enable = mkEnableOption "Enables Discord with Equicord";
     discord = {
       enable = mkOption {
         type = types.bool;
         default = true;
         description = ''
           Whether to enable discord
-          Disable to only install Vesktop
+          Disable to only install Equibop
         '';
       };
       package = mkOption {
@@ -88,7 +88,7 @@ in
         type = types.path;
         default =
           let
-            branch = config.programs.nixcord.discord.branch;
+            branch = config.programs.equinix.discord.branch;
             baseConfigPath =
               if pkgs.stdenvNoCC.isLinux then
                 config.xdg.configHome
@@ -106,29 +106,29 @@ in
           "${baseConfigPath}/${branchDirName}";
         description = "Config path for Discord";
       };
-      vencord = {
+      equicord = {
         enable = mkOption {
           type = types.bool;
           default = true;
-          description = "Enable Vencord (for non-vesktop)";
+          description = "Enable Equicord (for non-equibop)";
         };
         package = mkOption {
           type = types.package;
-          default = defaultVencord;
+          default = defaultEquicord;
           description = ''
-            The Vencord package to use
+            The Equicord package to use
           '';
         };
         unstable = mkOption {
           type = types.bool;
           default = false;
-          description = "Enable unstable Vencord build from repository's master branch";
+          description = "Enable unstable Equicord build from repository's master branch";
         };
       };
       openASAR.enable = mkOption {
         type = types.bool;
         default = true;
-        description = "Enable OpenASAR (for non-vesktop)";
+        description = "Enable OpenASAR (for non-equibop)";
       };
       autoscroll.enable = mkOption {
         type = types.bool;
@@ -143,21 +143,21 @@ in
         '';
       };
     };
-    vesktop = {
+    equibop = {
       enable = mkEnableOption ''
-        Whether to enable Vesktop
+        Whether to enable Equibop
       '';
       package = mkOption {
         type = types.package;
-        default = pkgs.vesktop;
+        default = pkgs.equibop;
         description = ''
-          The Vesktop package to use
+          The Equibop package to use
         '';
       };
-      useSystemVencord = mkOption {
+      useSystemEquicord = mkOption {
         type = types.bool;
         default = true;
-        description = "Use system Vencord package";
+        description = "Use system Equicord package";
       };
       configDir = mkOption {
         type = types.path;
@@ -166,234 +166,27 @@ in
             config.xdg.configHome
           else
             "${config.home.homeDirectory}/Library/Application Support"
-        }/vesktop";
-        description = "Config path for Vesktop";
+        }/equibop";
+        description = "Config path for Equibop";
       };
       settings = mkOption {
         type = types.attrs;
         default = { };
         description = ''
-          Settings to be placed in vesktop.configDir/settings.json
+          Settings to be placed in equibop.configDir/settings.json
         '';
       };
       state = mkOption {
         type = types.attrs;
         default = { };
         description = ''
-          Settings to be placed in vesktop.configDir/state.json
+          Settings to be placed in equibop.configDir/state.json
         '';
       };
       autoscroll.enable = mkOption {
         type = types.bool;
         default = false;
         description = "Enable middle-click autoscrolling";
-      };
-    };
-    dorion = {
-      enable = mkEnableOption ''
-        Whether to enable Dorion
-      '';
-      package = mkOption {
-        type = types.package;
-        default = pkgs.callPackage ../pkgs/dorion.nix { };
-        description = ''
-          The Dorion package to use
-        '';
-      };
-      configDir = mkOption {
-        type = types.path;
-        default = "${
-          if pkgs.stdenvNoCC.isLinux then
-            config.xdg.configHome
-          else
-            "${config.home.homeDirectory}/Library/Application Support"
-        }/dorion";
-        description = "Config path for Dorion";
-      };
-      theme = mkOption {
-        type = types.str;
-        default = "none";
-        description = "Theme to use in Dorion";
-      };
-      themes = mkOption {
-        type = types.listOf types.str;
-        default = [ "none" ];
-        description = "List of available themes";
-      };
-      zoom = mkOption {
-        type = types.str;
-        default = "1.0";
-        description = "Zoom level for the client";
-      };
-      blur = mkOption {
-        type = types.enum [
-          "none"
-          "blur"
-          "acrylic"
-        ];
-        default = "none";
-        description = "Window blur effect type";
-      };
-      blurCss = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Enable CSS blur effects";
-      };
-      useNativeTitlebar = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Use native window titlebar";
-      };
-      startMaximized = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Start Dorion maximized";
-      };
-      disableHardwareAccel = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Disable hardware acceleration";
-      };
-      sysTray = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Enable system tray integration";
-      };
-      trayIconEnabled = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Enable tray icon";
-      };
-      openOnStartup = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Open Dorion on system startup";
-      };
-      startupMinimized = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Start minimized to tray";
-      };
-      multiInstance = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Allow multiple Dorion instances";
-      };
-      pushToTalk = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Enable push-to-talk";
-      };
-      pushToTalkKeys = mkOption {
-        type = types.listOf types.str;
-        default = [ "RControl" ];
-        description = "Keys for push-to-talk activation";
-      };
-      updateNotify = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Show update notifications";
-      };
-      desktopNotifications = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Enable desktop notifications";
-      };
-      unreadBadge = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Show unread message badge";
-      };
-      win7StyleNotifications = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Use Windows 7 style notifications";
-      };
-      cacheCss = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Cache CSS for faster loading";
-      };
-      autoClearCache = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Automatically clear cache on startup";
-      };
-      clientType = mkOption {
-        type = types.str;
-        default = "default";
-        description = "Discord client type to emulate";
-      };
-      clientMods = mkOption {
-        type = types.listOf types.str;
-        default = [
-          "Shelter"
-          "Vencord"
-        ];
-        description = "Client modifications to enable";
-      };
-      clientPlugins = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Enable client plugins";
-      };
-      profile = mkOption {
-        type = types.str;
-        default = "default";
-        description = "Profile name to use";
-      };
-      streamerModeDetection = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Enable streamer mode detection";
-      };
-      rpcServer = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Enable RPC server";
-      };
-      rpcProcessScanner = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Enable RPC process scanner";
-      };
-      rpcIpcConnector = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Enable RPC IPC connector";
-      };
-      rpcWebsocketConnector = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Enable RPC WebSocket connector";
-      };
-      rpcSecondaryEvents = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Enable RPC secondary events";
-      };
-      proxyUri = mkOption {
-        type = types.str;
-        default = "";
-        description = "Proxy URI to use for connections";
-      };
-      keybinds = mkOption {
-        type = types.attrs;
-        default = { };
-        description = "Custom keybind mappings";
-      };
-      keybindsEnabled = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Enable custom keybinds";
-      };
-      extraSettings = mkOption {
-        type = types.attrs;
-        default = { };
-        description = ''
-          Additional settings to merge into config.json.
-          These will override any conflicting auto-generated settings.
-        '';
       };
     };
     package = mkOption {
@@ -404,11 +197,11 @@ in
         The Discord package to use
       '';
     };
-    vesktopPackage = mkOption {
+    equibopPackage = mkOption {
       type = with types; nullOr package;
       default = null;
       description = ''
-        The Vesktop package to use
+        The Equibop package to use
       '';
     };
     configDir = mkOption {
@@ -418,33 +211,33 @@ in
           config.xdg.configHome
         else
           "${config.home.homeDirectory}/Library/Application Support"
-      }/Vencord";
-      description = "Vencord config directory";
+      }/Equicord";
+      description = "Equicord config directory";
     };
-    vesktopConfigDir = mkOption {
+    equibopConfigDir = mkOption {
       type = with types; nullOr path;
       default = null;
-      description = "Config path for Vesktop";
+      description = "Config path for equibop";
     };
     openASAR.enable = mkOption {
       type = with types; nullOr bool;
       default = null;
-      description = "Enable OpenASAR (for non-vesktop)";
+      description = "Enable OpenASAR (for non-equibop)";
     };
     quickCss = mkOption {
       type = types.str;
       default = "";
-      description = "Vencord quick CSS";
+      description = "Equicord quick CSS";
     };
     config = {
       notifyAboutUpdates = mkEnableOption "Notify when updates are available";
-      autoUpdate = mkEnableOption "Automaticall update Vencord";
+      autoUpdate = mkEnableOption "Automatically update Equicord";
       autoUpdateNotification = mkEnableOption "Notify user about auto updates";
       useQuickCss = mkEnableOption "Enable quick CSS file";
       themeLinks = mkOption {
         type = with types; listOf str;
         default = [ ];
-        description = "A list of links to online vencord themes";
+        description = "A list of links to online Equicord themes";
         example = [ "https://raw.githubusercontent.com/rose-pine/discord/main/rose-pine.theme.css" ];
       };
       enabledThemes = mkOption {
@@ -458,28 +251,28 @@ in
       disableMinSize = mkEnableOption "Disable minimum window size for client";
       plugins = import ./plugins.nix { inherit lib; };
     };
-    vesktopConfig = mkOption {
+    equibopConfig = mkOption {
       type = types.attrs;
       default = { };
       description = ''
-        additional config to be added to programs.nixcord.config
-        for vesktop only
+        additional config to be added to programs.equinix.config
+        for Equibop only
       '';
     };
-    vencordConfig = mkOption {
+    equicordConfig = mkOption {
       type = types.attrs;
       default = { };
       description = ''
-        additional config to be added to programs.nixcord.config
-        for vencord only
+        additional config to be added to programs.equinix.config
+        for Equicord only
       '';
     };
     extraConfig = mkOption {
       type = types.attrs;
       default = { };
       description = ''
-        additional config to be added to programs.nixcord.config
-        for both vencord and vesktop
+        additional config to be added to programs.equinix.config
+        for both Equicord and Equibop
       '';
     };
     userPlugins =
@@ -573,10 +366,10 @@ in
     let
       parseRules = cfg.parseRules;
       inherit (pkgs.callPackage ./lib.nix { inherit lib parseRules; })
-        mkVencordCfg
+        mkEquicordCfg
         ;
 
-      vencord = applyPostPatch cfg.discord.vencord.package;
+      equicord = applyPostPatch cfg.discord.equicord.package;
 
       isQuickCssUsed =
         appConfig:
@@ -587,33 +380,30 @@ in
       {
         assertions = [
           {
-            assertion = !(cfg.discord.vencord.package != defaultVencord && cfg.discord.vencord.unstable);
-            message = "programs.nixcord.discord.vencord: Cannot set both 'package' and 'unstable = true'. Choose one or the other.";
+            assertion = !(cfg.discord.equicord.package != defaultEquicord && cfg.discord.equicord.unstable);
+            message = "programs.equinix.discord.equicord: Cannot set both 'package' and 'unstable = true'. Choose one or the other.";
           }
         ];
-        
-        programs.nixcord.finalPackage.discord = 
-          cfg.discord.package.override ({
-            withVencord = cfg.discord.vencord.enable;
-            withOpenASAR = cfg.discord.openASAR.enable;
-            enableAutoscroll = cfg.discord.autoscroll.enable;
-            branch = cfg.discord.branch;
-            inherit vencord;
-          });
+        programs.equinix.finalPackage.discord = 
+            cfg.discord.package.override ({
+              withEquicord = cfg.discord.equicord.enable;
+              withOpenASAR = cfg.discord.openASAR.enable;
+              enableAutoscroll = cfg.discord.autoscroll.enable;
+              branch = cfg.discord.branch;
+              inherit equicord;
+            });
 
-        programs.nixcord.finalPackage.vesktop = 
-          cfg.vesktop.package.override {
-            withSystemVencord = cfg.vesktop.useSystemVencord;
-            withMiddleClickScroll = cfg.vesktop.autoscroll.enable;
-            inherit vencord;
-          };
-
-        programs.nixcord.finalPackage.dorion = cfg.dorion.package;
-
-        home.packages = [
-          (mkIf cfg.discord.enable cfg.finalPackage.discord)
-          (mkIf cfg.vesktop.enable cfg.finalPackage.vesktop)
-          (mkIf cfg.dorion.enable cfg.finalPackage.dorion)
+          programs.equinix.finalPackage.equibop = 
+            cfg.equibop.package.override {
+              # withSystemEquicord = cfg.equibop.useSystemEquicord;
+              withMiddleClickScroll = cfg.equibop.autoscroll.enable;
+              inherit equicord;
+            }
+          
+          home.packages = [
+            (mkIf cfg.discord.enable cfg.finalPackage.discord)
+            (mkIf cfg.vesktop.enable cfg.finalPackage.vesktop)
+          ];
         ];
       }
       (mkIf cfg.discord.enable (mkMerge [
@@ -663,118 +453,53 @@ in
           '';
         }
         # QuickCSS
-        (mkIf (isQuickCssUsed cfg.vencordConfig) {
+        (mkIf (isQuickCssUsed cfg.equicordConfig) {
           home.file."${cfg.configDir}/settings/quickCss.css".text = cfg.quickCss;
         })
-        # Vencord Settings
+        # Equicord Settings
         {
           home.file."${cfg.configDir}/settings/settings.json".text = builtins.toJSON (
-            mkVencordCfg (recursiveUpdateAttrsList [
+            mkEquicordCfg (recursiveUpdateAttrsList [
               cfg.config
               cfg.extraConfig
-              cfg.vencordConfig
+              cfg.equicordConfig
             ])
           );
         }
         # Client Settings
         (mkIf (cfg.discord.settings != { }) {
           home.file."${cfg.discord.configDir}/settings.json".text = builtins.toJSON (
-            mkVencordCfg cfg.discord.settings
+            mkEquicordCfg cfg.discord.settings
           );
         })
       ]))
-      (mkIf cfg.vesktop.enable (mkMerge [
+      (mkIf cfg.equibop.enable (mkMerge [
         # QuickCSS
-        (mkIf (isQuickCssUsed cfg.vesktopConfig) {
-          home.file."${cfg.vesktop.configDir}/settings/quickCss.css".text = cfg.quickCss;
+        (mkIf (isQuickCssUsed cfg.equibopConfig) {
+          home.file."${cfg.equibop.configDir}/settings/quickCss.css".text = cfg.quickCss;
         })
-        # Vencord Settings
+        # Equicord Settings
         {
-          home.file."${cfg.vesktop.configDir}/settings/settings.json".text = builtins.toJSON (
-            mkVencordCfg (recursiveUpdateAttrsList [
+          home.file."${cfg.equibop.configDir}/settings/settings.json".text = builtins.toJSON (
+            mkEquicordCfg (recursiveUpdateAttrsList [
               cfg.config
               cfg.extraConfig
-              cfg.vesktopConfig
+              cfg.equibopConfig
             ])
           );
         }
-        # Vesktop Client Settings
-        (mkIf (cfg.vesktop.settings != { }) {
-          home.file."${cfg.vesktop.configDir}/settings.json".text = builtins.toJSON (
-            mkVencordCfg cfg.vesktop.settings
+        # Equibop Client Settings
+        (mkIf (cfg.equibop.settings != { }) {
+          home.file."${cfg.equibop.configDir}/settings.json".text = builtins.toJSON (
+            mkEquicordCfg cfg.equibop.settings
           );
         })
-        # Vesktop Client State
-        (mkIf (cfg.vesktop.state != { }) {
-          home.file."${cfg.vesktop.configDir}/state.json".text = builtins.toJSON (
-            mkVencordCfg cfg.vesktop.state
+        # Equibop Client State
+        (mkIf (cfg.equibop.state != { }) {
+          home.file."${cfg.equibop.configDir}/state.json".text = builtins.toJSON (
+            mkEquicordCfg cfg.equibop.state
           );
         })
-      ]))
-      # Dorion Client Settings
-      (mkIf cfg.dorion.enable (mkMerge [
-        {
-          home.file."${cfg.dorion.configDir}/config.json".text =
-            let
-              toSnakeCase =
-                str:
-                lib.pipe str [
-                  (builtins.split "([A-Z])")
-                  (builtins.foldl' (
-                    acc: part:
-                    if builtins.isList part then acc + "_" + (lib.toLower (builtins.elemAt part 0)) else acc + part
-                  ) "")
-                  (builtins.replaceStrings [ "__" ] [ "_" ])
-                ];
-              dorionConfig = {
-                autoupdate = false;
-              }
-              // (lib.mapAttrs' (name: value: {
-                name = toSnakeCase name;
-                inherit value;
-              }) (builtins.removeAttrs cfg.dorion [ "extraSettings" ]));
-            in
-            builtins.toJSON (dorionConfig // cfg.dorion.extraSettings);
-        }
-        {
-          home.activation.setupDorionVencordSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-            set -euo pipefail
-
-            webkit_base_dir="${
-              if pkgs.stdenvNoCC.isDarwin then
-                "${config.home.homeDirectory}/Library/WebKit/com.spikehd.dorion/WebsiteData/Default"
-              else
-                "${config.home.homeDirectory}/.local/share/dorion/profiles/default/webdata/localstorage"
-            }"
-
-            encode_utf16le() {
-              local input="$1"
-              echo -n "$input" | ${lib.getExe' pkgs.iconv "iconv"} -f UTF-8 -t UTF-16LE | ${lib.getExe pkgs.xxd} -p | tr -d '\n' | tr '[:lower:]' '[:upper:]'
-            }
-
-            vencord_settings='${
-              builtins.toJSON (
-                mkVencordCfg (recursiveUpdateAttrsList [
-                  cfg.config
-                  cfg.extraConfig
-                ])
-              )
-            }'
-
-            sqlite_paths=()
-            for sqlite_file in $(find "$webkit_base_dir" \( -name "*.sqlite3" -o -name "*.localstorage" \) -type f 2>/dev/null); do
-              if ${lib.getExe pkgs.sqlite} "$sqlite_file" "SELECT COUNT(*) FROM ItemTable WHERE key = 'VencordSettings';" 2>/dev/null | grep -q "1"; then
-                sqlite_paths+=("$sqlite_file")
-              fi
-            done
-
-            encoded_settings=$(encode_utf16le "$vencord_settings")
-
-            for sqlite_path in "''${sqlite_paths[@]}"; do
-              ${lib.getExe pkgs.sqlite} "$sqlite_path" "INSERT OR REPLACE INTO ItemTable (key, value) VALUES ('VencordSettings', X'$encoded_settings');"
-            done
-          '';
-        }
       ]))
       # Warnings
       {

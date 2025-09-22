@@ -1,4 +1,4 @@
-# Nixcord manual {#nixcord-manual}
+# equinix manual {#equinix-manual}
 
 ## Version @VERSION@
 
