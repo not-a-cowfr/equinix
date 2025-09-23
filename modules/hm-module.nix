@@ -348,16 +348,11 @@ in
         description = "The final discord package that is created";
       };
 
-      vesktop = mkOption {
+      equibop = mkOption {
         type = with types; package;
         readOnly = true;
-        description = "The final vesktop package that is created";
-      };
-      
-      dorion = mkOption {
-        type = with types; package;
-        readOnly = true;
-        description = "The final dorion package that is created";
+        description = "The final equibop package that is created";
+        default = null;
       };
     };
   };
