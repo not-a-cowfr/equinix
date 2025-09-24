@@ -33,26 +33,26 @@ def "into nix-type" [options?: any]: string -> string {
 	
     let settings = (
         $row.value
-        | transpose key value
-        | where ($it.value.type != "COMPONENT")
-        | each {|child|
-            let key = $"($child.key).enable"; # todo only add the .enable if the type is boolean
-			let default = if ($child.value.type == "SELECT") { $child.value.options? | where default? == true | get value.0 } else { $child.value.default? } | default null
-			
-            $"    ($key) = {
+        	| transpose key value
+        	| where ($it.value.type != "COMPONENT")
+        	| each {|child|
+        	    let key = if ($child.value.type == "BOOLEAN") { $"($child.key).enable"; } else { $child.key };
+				let default = if ($child.value.type == "SELECT") { $child.value.options? | where default? == true | get value.0 } else { $child.value.default? } | default null;
+
+        	    $"    ($key) = {
       type = ($child.value.type? | into nix-type ($child.value.options?.value?));
       description = \"($child.value.description? | default "")\";(if ($default != null) { $'(char nl)      default = ($default | to json);' } else { '' })
     };"
         }
-        | str join (char nl)
+        	| str join (char nl)
     )
 
     $"  ($key) = {
 ($settings)
   };"
 }
-| str join (char nl)
-| $"{
+	| str join (char nl)
+	| $"{
 ($in)
 }"
 
