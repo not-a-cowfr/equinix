@@ -26,6 +26,6 @@ def thing [] {
     $output
 }
 
-# remember to remove config options where the config type is component because that means like a button (im pretty sure always i havent seen anything besides that)
+# remember to remove config options where the config type is component because that means like a button (im pretty sure its always like that, i havent seen anything besides that)
 # and button is a one time thing not something configuarable
-thing | str replace --all --regex "\",\n\\},\n +\\}," "\",\n},\n" | from json
+thing | str replace --all --regex "\",\n\\},\n +\\}," "\",\n},\n" | from json | to json --indent 4 # looks stupid but its to format the json

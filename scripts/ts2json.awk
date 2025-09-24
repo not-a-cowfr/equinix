@@ -35,7 +35,6 @@ flag {
 
     if ($0 ~ /^[[:space:]]*restartNeeded:/) next
     if ($0 ~ /^[[:space:]]*disabled:/) next
-    if ($0 ~ /^[[:space:]]*markers:/) next
 
     $0 = gensub(/(:[[:space:]]*)([A-Za-z0-9_]+)\.([A-Za-z0-9_]+)/, "\\1\"\\3\"", "g", $0)
 
