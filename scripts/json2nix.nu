@@ -25,23 +25,27 @@ def "into nix-type" [options?: any]: string -> string {
 }
 
 # if you dont think ts is beautiful you dont have eyes
-./scripts/ts2json.nu 
+./scripts/ts2json.nu
 | from json 
 | transpose key value 
+| sort-by key
 | par-each {|row|
 	let key = if ($row.value | is-empty) { $"($row.key).enable" } else { $row.key };
 	
     let settings = (
-        $row.value
-        	| transpose key value
-        	| where ($it.value.type != "COMPONENT")
-        	| each {|child|
-        	    let key = if ($child.value.type == "BOOLEAN") { $"($child.key).enable"; } else { $child.key };
-				let default = if ($child.value.type == "SELECT") { $child.value.options? | where default? == true | get value.0 } else { $child.value.default? } | default null;
+		$row.value
+		| transpose key value
+		| where ($it.value.type != "COMPONENT")
+		| each {|child|
+			let key = if ($child.value.type == "BOOLEAN") { $"($child.key).enable"; } else { $child.key };
+			let default = if ($child.value.type == "SELECT") { $child.value.options? | where default? == true | get value.0 } else { $child.value.default? } | default null;
+			let range = if ($child.value | get -o stickToMarkers | is-not-empty) { $child.value.markers | parse 'makeRange({min}, {max}, {step}),' }
+			let type = $child.value.type | into nix-type ($child.value.options?.value?);
 
         	    $"    ($key) = {
-      type = ($child.value.type? | into nix-type ($child.value.options?.value?));
-      description = \"($child.value.description? | default "")\";(if ($default != null) { $'(char nl)      default = ($default | to json);' } else { '' })
+      type = (if ($child.value.type == "SLIDER" and ($range | is-not-empty)) { 'types.addCheck ' + $type + ' (x: x >= ' + $range.min.0 + ' && x <= ' + $range.max.0 + ' && mod x ' + $range.step.0 + ' == 0)' } else { $type } );
+      description = \"($child.value.description? | default "")\";
+	  default = ($default | to json | default "null");
     };"
         }
         	| str join (char nl)
@@ -56,5 +60,9 @@ def "into nix-type" [options?: any]: string -> string {
 ($in)
 }"
 
-# todo: sliders, use markers thing to get the range limit then make soemthing like this fpor nix
-# check = x: x >= 1 && x <= 12;
+# need to add mod operator thingy for the `check`
+# let
+#   mod = dividend: divisor: dividend - (divisor * (dividend / divisor));
+# in
+
+# todo: skip field if it has the `hidden` key and its true

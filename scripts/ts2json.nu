@@ -32,4 +32,4 @@ def thing [] {
 # and button is a one time thing not something configuarable
 # update: nevermind, `commandPalette` for example the component is to set a keybind which is 100% configuarble so idk might have to make a manual override for those
 
-thing | str replace --all --regex "\",\n\\},\n +\\}," "\",\n},\n" | from json | to json --indent 4 # looks stupid but its to format the json
+thing | str replace --all --regex "\",\n\\},\n +\\}," "\",\n},\n" | from json | sort | to json --indent 4 # looks stupid but its to format and sort the json
