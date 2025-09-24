@@ -136,7 +136,7 @@ You can also export all options to JSON using `nix build .#docs-json`
 ## Special Thanks
 
 Special Thanks to [Equicord],
-[nixcord](https://github.com/KaylorBen/nixcord),
+[nixcord],
 [Home Manager], and
 [Nix](https://nixos.org/) and all the contributers behind them. Without them,
 this project would not be possible.
@@ -146,5 +146,6 @@ this project would not be possible.
 Using Equicord violates Discord's terms of service.
 Read more about it at [Equicord] GitHub.
 
+[nixcord]: https://github.com/KaylorBen/nixcord
 [Equicord]: https://github.com/Equicord/Equicord
 [Home Manager]: https://github.com/nix-community/home-manager
