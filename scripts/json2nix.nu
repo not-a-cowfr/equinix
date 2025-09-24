@@ -1,22 +1,34 @@
 #!/usr/bin/env nu
 
-def "into nix-type" []: string -> string {
+# for visualization of the table
+# ./scripts/ts2json.nu 
+# 	| from json 
+# 	| transpose key value 
+# 	| each {|row|
+# 		{
+# 			name: $row.key,
+# 			settings: ($row.value | transpose key value | where ($it.value.type != "COMPONENT"))
+# 		}
+# 	}
+
+def "into nix-type" [options?: any]: string -> string {
   match $in {
     "BOOLEAN" => "types.bool",
     "STRING"  => "types.str",
     "NUMBER"  => "types.int",
     "SLIDER"  => "types.int",
-    "SELECT"  => "types.enum", # todo: add enum data in this too, maybe pass as optional param?
+    "SELECT"  => $"types.enum ($options | to json | lines | str trim | str join ' ')",
     _         => {
 		error make { msg: $"Unhandled attempted type conversion ($in)" };
 	}
   }
 }
 
+# if you dont think ts is beautiful you dont have eyes
 ./scripts/ts2json.nu 
 | from json 
 | transpose key value 
-| each {|row|
+| par-each {|row|
 	let key = if ($row.value | is-empty) { $"($row.key).enable" } else { $row.key };
 	
     let settings = (
@@ -24,12 +36,12 @@ def "into nix-type" []: string -> string {
         | transpose key value
         | where ($it.value.type != "COMPONENT")
         | each {|child|
-            let key = $"($child.key).enable";
-
+            let key = $"($child.key).enable"; # todo only add the .enable if the type is boolean
+			let default = if ($child.value.type == "SELECT") { $child.value.options? | where default? == true | get value.0 } else { $child.value.default? } | default null
+			
             $"    ($key) = {
-      type = ($child.value.type? | into nix-type);
-      description = \"($child.value.description? | default "")\";
-      default = ($child.value | get default? | default null | to json);
+      type = ($child.value.type? | into nix-type ($child.value.options?.value?));
+      description = \"($child.value.description? | default "")\";(if ($default != null) { $'(char nl)      default = ($default | to json);' } else { '' })
     };"
         }
         | str join (char nl)

@@ -7,6 +7,8 @@
 # git clone https://github.com/Equicord/Equicord
 
 def thing [] {
+    let awk = cat ./scripts/ts2json.awk
+
     cd Equicord/src/equicordplugins
     
     mut output = "{"
@@ -17,7 +19,7 @@ def thing [] {
         let dirname = ($file | path dirname | path basename)
         $output += $"\"($dirname)\": {"
 
-        $output += (awk (cat ../../../scripts/ts2json.awk) $file | str join "\n")
+        $output += (awk $awk $file | str join "\n")
 
         $output += "},"
     }
@@ -26,6 +28,8 @@ def thing [] {
     $output
 }
 
-# remember to remove config options where the config type is component because that means like a button (im pretty sure its always like that, i havent seen anything besides that)
+# remember to remove config options where the config type is component because that means like a button
 # and button is a one time thing not something configuarable
+# update: nevermind, `commandPalette` for example the component is to set a keybind which is 100% configuarble so idk might have to make a manual override for those
+
 thing | str replace --all --regex "\",\n\\},\n +\\}," "\",\n},\n" | from json | to json --indent 4 # looks stupid but its to format the json
