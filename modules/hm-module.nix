@@ -248,7 +248,9 @@ in
       enableReactDevtools = mkEnableOption "Enable React developer tools";
       frameless = mkEnableOption "Make client frameless";
       transparent = mkEnableOption "Enable client transparency";
+      winCtrlQ = mkEnableOption "Enable meta + ctrl + Q to close the app";
       disableMinSize = mkEnableOption "Disable minimum window size for client";
+      winNativeTitleBar = mkEnableOption "Whether to use the WM native title bar";
       plugins = import ./plugins.nix { inherit lib; };
     };
     equibopConfig = mkOption {
