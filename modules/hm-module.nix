@@ -252,6 +252,39 @@ in
       disableMinSize = mkEnableOption "Disable minimum window size for client";
       winNativeTitleBar = mkEnableOption "Whether to use the WM native title bar";
       plugins = import ./plugins.nix { inherit lib; };
+      notifications = {
+        timeout = mkOption {
+          type = types.int;
+          description = "How long the notification lasts in ms, set to 0 for no timeout";
+          default = 5000;
+        };
+        position = mkOption {
+          type = types.enum [ "top-right" "bottom-right" ];
+          description = "Position of the notification";
+          default = "bottom-right";
+        };
+        useNative = mkOption {
+          type = types.enum [ "always" "never" "not-focused" ];
+          description = ''
+            When to use native WM notifications rather than in-app notifications
+            (for equicord notifications only, this does not affect for example ping notifications)
+          '';
+          default = "not-focused";
+        };
+        missed = mkOption {
+          type = types.bool;
+          description = "When refocusing discord a notification will pop up with how many you missed";
+          default = true;
+        };
+        logLimit = mkOption {
+          type = types.either types.int types.enum [ "Infinity" ];
+          description = ''
+            The amount of notifications to save in the log before clearing old ones to make room for new ones
+            Set to 0 to never log notifications, and "Infinity" to never clear notification logs
+          '';
+          default = 50;
+        };
+      };
     };
     equibopConfig = mkOption {
       type = types.attrs;
