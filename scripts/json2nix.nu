@@ -39,15 +39,17 @@ def "into nix-type" [options?: any]: string -> string {
 			| where ($it.value.type != "COMPONENT") # most of the time this means that its like a one time use button (eg. to reset something), except for when it isnt so idk i need to manually handle those
 			| each {|child|
 				if ($child.value | get -o hidden | is-empty) {
+					let enum_options_are_bools = ($child.value.options?.value? | describe) == "list<bool>";
+
 					# make boolean options just be .enable for nix semantics
 					let key = if ($child.value.type == "BOOLEAN") { $"($child.key).enable"; } else { $child.key };
 					# if the type is select then you have to find the default differently
-					let default = if ($child.value.type == "SELECT") { $child.value.options? | where default? == true | get value.0 } else { $child.value.default? } | to json | default "null";
+					let default = if ($child.value.type == "SELECT") { $child.value.options? | where default? == true | if ($enum_options_are_bools) { get label.0 } else { get value.0 } } else { $child.value.default? } | to json | default "null";
 					# if stick to markers doesnt exist then the range isnt actually something you have to follow, but if it is there, then parse the range
 					let range = if ($child.value | get -o stickToMarkers | is-not-empty) { $child.value.markers | parse 'makeRange({min}, {max}, {step}),' }
 
 					# turn the string type representation into an actual nix type
-					let type = $child.value.type | into nix-type ($child.value.options?.value?);
+					let type = $child.value.type | into nix-type (if ($enum_options_are_bools) { $child.value.options?.label? } else { $child.value.options?.value? } );
 					# if the type is a slider (and the range exists) then you need to add a check to make sure its in the specified range
 					let type = if ($child.value.type == "SLIDER" and ($range | is-not-empty)) {
 						'types.addCheck ' + $type + ' (x: x >= ' + $range.min.0 + ' && x <= ' + $range.max.0 + ' && mod x ' + $range.step.0 + ' == 0)'
