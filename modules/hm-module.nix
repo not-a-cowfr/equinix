@@ -379,26 +379,26 @@ in
             message = "programs.equinix.discord.equicord: Cannot set both 'package' and 'unstable = true'. Choose one or the other.";
           }
         ];
-        programs.equinix.finalPackage.discord = 
-            cfg.discord.package.override ({
-              withEquicord = cfg.discord.equicord.enable;
-              withOpenASAR = cfg.discord.openASAR.enable;
-              enableAutoscroll = cfg.discord.autoscroll.enable;
-              branch = cfg.discord.branch;
-              inherit equicord;
-            });
 
-          programs.equinix.finalPackage.equibop = 
-            cfg.equibop.package.override {
-              # withSystemEquicord = cfg.equibop.useSystemEquicord;
-              withMiddleClickScroll = cfg.equibop.autoscroll.enable;
-              inherit equicord;
-            }
-          
-          home.packages = [
-            (mkIf cfg.discord.enable cfg.finalPackage.discord)
-            (mkIf cfg.vesktop.enable cfg.finalPackage.vesktop)
-          ];
+        programs.equinix.finalPackage.discord = 
+          cfg.discord.package.override ({
+            withEquicord = cfg.discord.equicord.enable;
+            withOpenASAR = cfg.discord.openASAR.enable;
+            enableAutoscroll = cfg.discord.autoscroll.enable;
+            branch = cfg.discord.branch;
+            inherit equicord;
+          });
+
+        programs.equinix.finalPackage.equibop = 
+          cfg.equibop.package.override {
+            # withSystemEquicord = cfg.equibop.useSystemEquicord;
+            withMiddleClickScroll = cfg.equibop.autoscroll.enable;
+            inherit equicord;
+          };
+        
+        home.packages = [
+          (mkIf cfg.discord.enable cfg.finalPackage.discord)
+          (mkIf cfg.vesktop.enable cfg.finalPackage.vesktop)
         ];
       }
       (mkIf cfg.discord.enable (mkMerge [
