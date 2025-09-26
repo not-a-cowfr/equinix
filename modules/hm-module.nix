@@ -277,7 +277,7 @@ in
           default = true;
         };
         logLimit = mkOption {
-          type = types.either types.int types.enum [ "Infinity" ];
+          type = types.either types.int (types.enum [ "Infinity" ]);
           description = ''
             The amount of notifications to save in the log before clearing old ones to make room for new ones
             Set to 0 to never log notifications, and "Infinity" to never clear notification logs
