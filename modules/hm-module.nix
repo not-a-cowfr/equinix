@@ -387,7 +387,6 @@ in
         type = with types; package;
         readOnly = true;
         description = "The final equibop package that is created";
-        default = null;
       };
     };
   };
@@ -433,7 +432,7 @@ in
         
         home.packages = [
           (mkIf cfg.discord.enable cfg.finalPackage.discord)
-          (mkIf cfg.vesktop.enable cfg.finalPackage.vesktop)
+          (mkIf cfg.equibop.enable cfg.finalPackage.equibop)
         ];
       }
       (mkIf cfg.discord.enable (mkMerge [
