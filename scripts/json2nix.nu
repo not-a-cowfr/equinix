@@ -26,11 +26,11 @@ def "into nix-type" [options?: any]: string -> string {
 }
 
 # if you dont think ts is beautiful you dont have eyes
-./scripts/ts2json.nu equicord
+./scripts/ts2json-equicord.nu
 	| from json
 	| transpose key value
 	| sort-by key
-	| par-each {|row|
+	| par-each --keep-order {|row|
 		# if the key doesnt have any child config optiosn then it has no settings and is just enable/disable
 		let key = if ($row.value | is-empty) { $"($row.key).enable" } else { $row.key };
 
